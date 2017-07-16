@@ -7,6 +7,7 @@
 
 ### 构建
 
+0. Python 2.6+ (but not Python 3)
 1. 安装好bazel代码构建工具，安装好tensorflow（目前本项目需要tf 1.0.0alpha版本以上)
 2. 切换到本项目代码目录，运行./configure
 3. 编译后台服务 
@@ -24,16 +25,18 @@
 2. 解压语料到一个目录
 
 3. 切换到代码目录，运行:
-  > python kcws/train/process_anno_file.py <语料目录> pre_chars_for_w2v.txt
-  
-  > bazel build third_party/word2vec:word2vec
-  
+  ```sh
+  python kcws/train/process_anno_file.py <语料目录> pre_chars_for_w2v.txt
+  ```
+  ```sh
+  bazel build third_party/word2vec:word2vec
+  ```
   > 先得到初步词表
-  
-  > ./bazel-bin/third_party/word2vec/word2vec -train pre_chars_for_w2v.txt -save-vocab pre_vocab.txt -min-count 3
-  
+  ```sh
+   ./bazel-bin/third_party/word2vec/word2vec -train pre_chars_for_w2v.txt -save-vocab pre_vocab.txt -min-count 3
+  ```
   > 处理低频词
-  
+  >
   > python kcws/train/replace_unk.py pre_vocab.txt pre_chars_for_w2v.txt chars_for_w2v.txt
   > 
   > 训练word2vec

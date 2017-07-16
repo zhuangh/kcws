@@ -21,10 +21,14 @@ def processToken(token, collect, out, end):
     nn = nn - 1
 
   token = token[:nn - 1].strip()
+  #print(token)
   ustr = unicode(token.decode('utf8'))
+  #print(ustr)
   for u in ustr:
     collect.append(u)
+    #print(u.encode('utf8'))
   uline = u''
+  #print(collect)
   if token == '。' or end:
     if len(collect) > maxLen:
       longLine += 1
@@ -34,6 +38,7 @@ def processToken(token, collect, out, end):
         uline = uline + u" " + s
       else:
         uline = s
+    #print(uline)
     out.write("%s\n" % (str(uline.encode('utf8'))))
     del collect[:]
 
@@ -80,6 +85,7 @@ def processLine(line, out):
         processToken(token, collect, out, True)
   except Exception as e:
     pass
+    #print(e)
 
 
 def main(argc, argv):
@@ -95,7 +101,8 @@ def main(argc, argv):
     for file in fileList:
       if file.endswith(".txt"):
         curFile = os.path.join(curDir, file)
-        # print("processing:%s" % (curFile))
+        #print("processing:%s" % (curFile))
+        #print("processing:%s %s" % (curFile, curDir))
         fp = open(curFile, "r")
         for line in fp.readlines():
           line = line.strip()
