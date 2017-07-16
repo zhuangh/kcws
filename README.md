@@ -35,7 +35,7 @@
   ```sh
  ./bazel-bin/third_party/word2vec/word2vec -train pre_chars_for_w2v.txt -save-vocab pre_vocab.txt -min-count 3
  ```
- 
+  > 处理低频词
 ```sh
  python kcws/train/replace_unk.py pre_vocab.txt pre_chars_for_w2v.txt chars_for_w2v.txt
 ```
