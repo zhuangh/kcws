@@ -1,6 +1,5 @@
 
 ### 引用 
-
  
 本项目模型BiLSTM+CRF参考论文：http://www.aclweb.org/anthology/N16-1030 ,IDCNN+CRF参考论文：https://arxiv.org/abs/1702.02098
 
@@ -12,8 +11,9 @@
 2. 切换到本项目代码目录，运行./configure
 3. 编译后台服务 
 
-   > bazel build //kcws/cc:seg_backend_api
-
+```sh
+    bazel build //kcws/cc:seg_backend_api
+```
 
 ### 训练
 
@@ -36,45 +36,52 @@
    ./bazel-bin/third_party/word2vec/word2vec -train pre_chars_for_w2v.txt -save-vocab pre_vocab.txt -min-count 3
   ```
   > 处理低频词
-  >
-  > python kcws/train/replace_unk.py pre_vocab.txt pre_chars_for_w2v.txt chars_for_w2v.txt
-  > 
+  ```sh
+  python kcws/train/replace_unk.py pre_vocab.txt pre_chars_for_w2v.txt chars_for_w2v.txt
+  ``` 
   > 训练word2vec
-  > 
-  > ./bazel-bin/third_party/word2vec/word2vec -train chars_for_w2v.txt -output vec.txt -size 50 -sample 1e-4 -negative 5 -hs 1 -binary 0 -iter 5
-  > 
+  ```sh
+   ./bazel-bin/third_party/word2vec/word2vec -train chars_for_w2v.txt -output vec.txt -size 50 -sample 1e-4 -negative 5 -hs 1 -binary 0 -iter 5
+  ``` 
   > 构建训练语料工具
-  > 
-  > bazel build kcws/train:generate_training
-  > 
+  ```sh
+   bazel build kcws/train:generate_training
+  ``` 
   > 生成语料
-  > 
-  > ./bazel-bin/kcws/train/generate_training vec.txt <语料目录> all.txt
-  > 
+  ```sh 
+   ./bazel-bin/kcws/train/generate_training vec.txt <语料目录> all.txt
+  ``` 
   > 得到train.txt , test.txt文件
-  > 
-  > python kcws/train/filter_sentence.py all.txt
-  
-4. 安装好tensorflow,切换到kcws代码目录，运行:
+  ```sh 
+   python kcws/train/filter_sentence.py all.txt
+  ```
 
+4. 安装好tensorflow,切换到kcws代码目录，运行:
   > python kcws/train/train_cws.py --word2vec_path vec.txt --train_data_path <绝对路径到train.txt> --test_data_path test.txt --max_sentence_len 80 --learning_rate 0.001
   （默认使用IDCNN模型，可设置参数”--use_idcnn False“来切换BiLSTM模型)
   
+```sh
+```  
 5. 生成vocab
-  > bazel  build kcws/cc:dump_vocab
-  
-  > ./bazel-bin/kcws/cc/dump_vocab vec.txt kcws/models/basic_vocab.txt
-  
+```sh
+```
+```sh
+  ./bazel-bin/kcws/cc/dump_vocab vec.txt kcws/models/basic_vocab.txt
+```
+
 6. 导出训练好的模型
- >  python tools/freeze_graph.py --input_graph logs/graph.pbtxt  --input_checkpoint logs/model.ckpt --output_node_names  "transitions,Reshape_7"   --output_graph kcws/models/seg_model.pbtxt
+```sh
+ python tools/freeze_graph.py --input_graph logs/graph.pbtxt  --input_checkpoint logs/model.ckpt --output_node_names  "transitions,Reshape_7"   --output_graph kcws/models/seg_model.pbtxt
+```
 
 7. 词性标注模型下载  (临时方案，后续文档给出词性标注模型训练，导出等）
 
    >  从 https://pan.baidu.com/s/1bYmABk 下载pos_model.pbtxt到kcws/models/目录下
 
 8. 运行web service
- >  ./bazel-bin/kcws/cc/seg_backend_api --model_path=kcws/models/seg_model.pbtxt(绝对路径到seg_model.pbtxt>)   --vocab_path=kcws/models/basic_vocab.txt   --max_sentence_len=80
-
+```sh
+  ./bazel-bin/kcws/cc/seg_backend_api --model_path=kcws/models/seg_model.pbtxt(绝对路径到seg_model.pbtxt>)   --vocab_path=kcws/models/basic_vocab.txt   --max_sentence_len=80
+```
 ### 词性标注的训练说明：
 
 https://github.com/koth/kcws/blob/master/pos_train.md
