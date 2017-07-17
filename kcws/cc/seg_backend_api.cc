@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
                         FLAGS_user_dict_path))
       << "Load model error";
   if (!FLAGS_pos_model_path.empty()) {
-    kcws::PosTagger* tagger = new kcws::PosTagger;
+    kcws::PosTagger* tagger = new kcws::PosTagger; // TODO: smart pointer?
     CHECK(tagger->LoadModel(FLAGS_pos_model_path,
                             FLAGS_word_vocab_path,
                             FLAGS_vocab_path,
