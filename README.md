@@ -81,6 +81,9 @@
 
 8. 运行web service
 ```sh
+bazel build kcws/cc:seg_backend_api
+```
+```sh
   ./bazel-bin/kcws/cc/seg_backend_api --model_path=kcws/models/seg_model.pbtxt(绝对路径到seg_model.pbtxt>)   --vocab_path=kcws/models/basic_vocab.txt   --max_sentence_len=80
 ```
 
