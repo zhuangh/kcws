@@ -4,8 +4,10 @@
  * Filename:  seg_backend_api.cc
  * Author:  Koth
  * Create Time: 2016-11-20 20:43:26
+ * Contributors: 
+ *    Hao Zhuang (zhuanghoward@gmail.com)
  * Description:
- *
+ *    Served as a web service for word segemnation.
  */
 #include <string>
 #include <thread>
@@ -66,7 +68,8 @@ int main(int argc, char* argv[]) {
     VLOG(0) << "got body:";
     fprintf(stderr, "%s\n", gotReqBody.c_str());
     jsonxx::Object toRet;
-    if (obj.parse(gotReqBody) && obj.has<std::string>("sentence")) {
+    obj.parse(gotReqBody);
+    if (obj.has<std::string>("sentence")) {
       std::string sentence = obj.get<std::string>("sentence");
       std::vector<std::string> result;
       std::vector<std::string> tags;
@@ -88,6 +91,13 @@ int main(int argc, char* argv[]) {
         }
         toRet << "segments" << rarr;
       }
+    } else if( obj.has<std::string>("word2vec")){
+      std::string word = obj.get<std::string>("word2vec");      
+      VLOG(0) << "got body [word2vec]:";
+      fprintf(stderr, "%s\n", gotReqBody.c_str());
+      //call word2vec function to get similar words
+      toRet<<"word2vec"<<word;
+      //cout<<"word2vec"<<endl;
     } else {
       desc = "Parse request error";
     }
