@@ -20,6 +20,7 @@
 #include "kcws/cc/tf_seg_model.h"
 #include "kcws/cc/pos_tagger.h"
 #include "third_party/crow/include/crow.h"
+//#include "third_party/word2vec/word2vec.h"
 #include "tensorflow/core/platform/init_main.h"
 
 DEFINE_int32(port, 9090, "the  api serving binding port");
@@ -40,6 +41,7 @@ class SegMiddleware {
   void after_handle(crow::request& req, crow::response& res, context& ctx) {}
  private:
 };
+
 int main(int argc, char* argv[]) {
   tensorflow::port::InitMain(argv[0], &argc, &argv);
   google::ParseCommandLineFlags(&argc, &argv, true);
@@ -50,6 +52,7 @@ int main(int argc, char* argv[]) {
                         FLAGS_max_sentence_len,
                         FLAGS_user_dict_path))
       << "Load model error";
+
   if (!FLAGS_pos_model_path.empty()) {
     kcws::PosTagger* tagger = new kcws::PosTagger; // TODO: smart pointer?
     CHECK(tagger->LoadModel(FLAGS_pos_model_path,
@@ -59,11 +62,13 @@ int main(int argc, char* argv[]) {
                             FLAGS_max_word_num)) << "load pos model error";
     model.SetPosTagger(tagger);
   }
+
   CROW_ROUTE(app, "/tf_seg/api").methods("POST"_method)
   ([&model](const crow::request & req) {
     jsonxx::Object obj;
     int status = -1;
     std::string desc = "OK";
+    //fprintf(stderr, "%s\n", req.c_str());
     std::string gotReqBody = req.body;
     VLOG(0) << "got body:";
     fprintf(stderr, "%s\n", gotReqBody.c_str());
@@ -97,17 +102,24 @@ int main(int argc, char* argv[]) {
       fprintf(stderr, "%s\n", gotReqBody.c_str());
       //call word2vec function to get similar words
       toRet<<"word2vec"<<word;
+      //crow::json::wvalue raw_json;
+      //raw_json["message"] = word;
+      //return raw_json;
+      //raw_json["message"] = word;
       //cout<<"word2vec"<<endl;
     } else {
       desc = "Parse request error";
     }
     toRet << "status" << status;
     toRet << "msg" << desc;
+    //fprintf(stderr, "%s\n", toRet.json().c_str());
     return crow::response(toRet.json());
   });
+
   CROW_ROUTE(app, "/")([](const crow::request & req) {
     return crow::response(std::string(reinterpret_cast<char*>(&kcws_cc_demo_html[0]), kcws_cc_demo_html_len));
   });
+
   app.port(FLAGS_port).multithreaded().run();
   return 0;
 }
