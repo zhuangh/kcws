@@ -109,6 +109,5 @@ http://45.32.100.248:18080
 
 
 ### Reference 
- 
-Lample, G., Ballesteros, M., Subramanian, S., Kawakami, K. and Dyer, C., 2016. Neural architectures for named entity recognition. arXiv preprint arXiv:1603.01360. http://www.aclweb.org/anthology/N16-1030
+Guillaume Lample, Miguel Ballesteros, Kazuya Kawakami, Sandeep Subramanian, and Chris Dyer "Neural architectures for named entity recognition," NAACL-HLT, 2016 (http://www.aclweb.org/anthology/N16-1030)
 
