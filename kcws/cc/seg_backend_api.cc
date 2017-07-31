@@ -20,7 +20,7 @@
 #include "kcws/cc/tf_seg_model.h"
 #include "kcws/cc/pos_tagger.h"
 #include "third_party/crow/include/crow.h"
-//#include "third_party/word2vec/word2vec.h"
+//#include "third_party/word2vec/word2vec.c"
 #include "tensorflow/core/platform/init_main.h"
 
 DEFINE_int32(port, 9090, "the  api serving binding port");
@@ -102,8 +102,9 @@ int main(int argc, char* argv[]) {
       fprintf(stderr, "%s\n", gotReqBody.c_str());
       //call word2vec function to get similar words
       toRet<<"word2vec"<<word;
+
       //crow::json::wvalue raw_json;
-      //raw_json["message"] = word;
+      raw_json["message"] = distance(word);
       //return raw_json;
       //raw_json["message"] = word;
       //cout<<"word2vec"<<endl;
