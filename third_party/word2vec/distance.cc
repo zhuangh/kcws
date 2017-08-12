@@ -97,7 +97,7 @@ int distance_query(char * st1, char ** bestw, float * bestd, char* vocab, float 
     cn = 0;
     b = 0;
     c = 0;
-    printf("-=-%s\n",st1);
+    
     while (1) {
       st[cn][b] = st1[c];
       b++;
@@ -108,13 +108,12 @@ int distance_query(char * st1, char ** bestw, float * bestd, char* vocab, float 
         cn++;
         b = 0;
         c++;
-      }
-      printf("!%s\n", st[cn]);
+      }      
     }
     cn++;
     for (a = 0; a < cn; a++) {
       for (b = 0; b < words; b++) {
-        printf("!!%d %s %s\n", words, &vocab[b * max_w], &st[a]);
+        //printf("!!%d %s %s\n", words, &vocab[b * max_w], &st[a]);
         if (!strcmp(&vocab[b * max_w], st[a])) break;        
       }
       if (b == words) b = -1;
