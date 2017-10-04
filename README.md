@@ -1,8 +1,10 @@
+Deep Learning Chinese Word Segment (https://github.com/koth/kcws)
 
 ### 引用 
  
 本项目模型基本是参考论文：http://www.aclweb.org/anthology/N16-1030
 
+### Build
 
 ### 构建
 
@@ -15,9 +17,7 @@
     bazel build //kcws/cc:seg_backend_api
 ```
 
-### 训练
-
-1. 关注待字闺中公众号 回复 kcws 获取语料下载地址：
+1. Follow Wechat ID, reply kcws to get corpus download link：
    
    ![logo](https://github.com/koth/kcws/blob/master/docs/qrcode_dzgz.jpg?raw=true "待字闺中")
    
@@ -108,5 +108,6 @@ http://45.32.100.248:9090/
 http://45.32.100.248:18080
 
 
-
+### Reference 
+Guillaume Lample, Miguel Ballesteros, Kazuya Kawakami, Sandeep Subramanian, and Chris Dyer "Neural architectures for named entity recognition," NAACL-HLT, 2016 (http://www.aclweb.org/anthology/N16-1030)
 
