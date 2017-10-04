@@ -1,10 +1,9 @@
+Deep Learning Chinese Word Segment (https://github.com/koth/kcws)
 
 ### 引用 
- 
-本项目模型基本是参考论文：http://www.aclweb.org/anthology/N16-1030
+本项目模型BiLSTM+CRF参考论文：http://www.aclweb.org/anthology/N16-1030 ,IDCNN+CRF参考论文：https://arxiv.org/abs/1702.02098
 
-
-### 构建
+### Build
 
 0. Python 2.6+ (but not Python 3)
 1. 安装好bazel代码构建工具，安装好tensorflow（目前本项目需要tf 1.0.0alpha版本以上)
@@ -15,32 +14,32 @@
     bazel build //kcws/cc:seg_backend_api
 ```
 
-### 训练
+### Training
 
-1. 关注待字闺中公众号 回复 kcws 获取语料下载地址：
+1. Follow Wechat ID, reply kcws to get corpus download link：
    
    ![logo](https://github.com/koth/kcws/blob/master/docs/qrcode_dzgz.jpg?raw=true "待字闺中")
    
    
-2. 解压语料到一个目录
+2. Unzip to DIR
 
-3. 切换到代码目录，运行:
+3. Run:
   ```sh
-  python kcws/train/process_anno_file.py <语料目录> pre_chars_for_w2v.txt
+  python kcws/train/process_anno_file.py <DIR> pre_chars_for_w2v.txt
   ```
   ```sh
   bazel build third_party/word2vec:word2vec
   ```
-  > 先得到初步词表
+  > Obtain inital vocabulary table
   ```sh
  ./bazel-bin/third_party/word2vec/word2vec -train pre_chars_for_w2v.txt -save-vocab pre_vocab.txt -min-count 3
  ```
-  > 处理低频词
+  > Process low-frequency words
 ```sh
  python kcws/train/replace_unk.py pre_vocab.txt pre_chars_for_w2v.txt chars_for_w2v.txt
 ```
 
-  > 训练word2vec
+  > Train word2vec
   ```sh
    ./bazel-bin/third_party/word2vec/word2vec -train chars_for_w2v.txt -output vec.txt -size 50 -sample 1e-4 -negative 5 -hs 1 -binary 0 -iter 5
   ``` 
@@ -58,12 +57,13 @@
   ```
 
 4. 安装好tensorflow,切换到kcws代码目录，运行:
+  > python kcws/train/train_cws.py --word2vec_path vec.txt --train_data_path <绝对路径到train.txt> --test_data_path test.txt --max_sentence_len 80 --learning_rate 0.001
+  （默认使用IDCNN模型，可设置参数”--use_idcnn False“来切换BiLSTM模型)
+  
 ```sh
-  python kcws/train/train_cws_lstm.py --word2vec_path vec.txt --train_data_path <绝对路径到train.txt> --test_data_path test.txt --max_sentence_len 80 --learning_rate 0.001
 ```  
 5. 生成vocab
 ```sh
-   bazel  build kcws/cc:dump_vocab
 ```
 ```sh
   ./bazel-bin/kcws/cc/dump_vocab vec.txt kcws/models/basic_vocab.txt
@@ -108,5 +108,6 @@ http://45.32.100.248:9090/
 http://45.32.100.248:18080
 
 
-
+### Reference 
+Guillaume Lample, Miguel Ballesteros, Kazuya Kawakami, Sandeep Subramanian, and Chris Dyer "Neural architectures for named entity recognition," NAACL-HLT, 2016 (http://www.aclweb.org/anthology/N16-1030)
 
