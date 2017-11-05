@@ -97,11 +97,13 @@ def main(argc, argv):
   rootDir = argv[1]
   out = open(argv[2], "w")
   for dirName, subdirList, fileList in os.walk(rootDir):
-    curDir = os.path.join(rootDir, dirName)
+    #print(dirName)#, subdirList)#, fileList)
+    #curDir = os.path.join(rootDir, dirName)
+    curDir = dirName
     for file in fileList:
       if file.endswith(".txt"):
         curFile = os.path.join(curDir, file)
-        #print("processing:%s" % (curFile))
+        print("processing:%s" % (curFile))
         #print("processing:%s %s" % (curFile, curDir))
         fp = open(curFile, "r")
         for line in fp.readlines():

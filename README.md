@@ -1,23 +1,22 @@
-Deep Learning Chinese Word Segment (https://github.com/koth/kcws)
 
-### 引用 
- 
-本项目模型基本是参考论文：http://www.aclweb.org/anthology/N16-1030
+### 引用 
 
-### Build
+ 
+本项目模型BiLSTM+CRF参考论文：http://www.aclweb.org/anthology/N16-1030 ,IDCNN+CRF参考论文：https://arxiv.org/abs/1702.02098
+
 
 ### 构建
 
-0. Python 2.6+ (but not Python 3)
 1. 安装好bazel代码构建工具，安装好tensorflow（目前本项目需要tf 1.0.0alpha版本以上)
 2. 切换到本项目代码目录，运行./configure
 3. 编译后台服务 
 
-```sh
-    bazel build //kcws/cc:seg_backend_api
-```
+   > bazel build //kcws/cc:seg_backend_api
 
-1. Follow Wechat ID, reply kcws to get corpus download link：
+
+### 训练
+
+1. 关注待字闺中公众号 回复 kcws 获取语料下载地址：
    
    ![logo](https://github.com/koth/kcws/blob/master/docs/qrcode_dzgz.jpg?raw=true "待字闺中")
    
@@ -25,66 +24,53 @@ Deep Learning Chinese Word Segment (https://github.com/koth/kcws)
 2. 解压语料到一个目录
 
 3. 切换到代码目录，运行:
-  ```sh
-  python kcws/train/process_anno_file.py <语料目录> pre_chars_for_w2v.txt
-  ```
-  ```sh
-  bazel build third_party/word2vec:word2vec
-  ```
+  > python kcws/train/process_anno_file.py <语料目录> pre_chars_for_w2v.txt
+  
+  > bazel build third_party/word2vec:word2vec
+  
   > 先得到初步词表
-  ```sh
- ./bazel-bin/third_party/word2vec/word2vec -train pre_chars_for_w2v.txt -save-vocab pre_vocab.txt -min-count 3
- ```
+  
+  > ./bazel-bin/third_party/word2vec/word2vec -train pre_chars_for_w2v.txt -save-vocab pre_vocab.txt -min-count 3
+  
   > 处理低频词
-```sh
- python kcws/train/replace_unk.py pre_vocab.txt pre_chars_for_w2v.txt chars_for_w2v.txt
-```
-
+  
+  > python kcws/train/replace_unk.py pre_vocab.txt pre_chars_for_w2v.txt chars_for_w2v.txt
+  > 
   > 训练word2vec
-  ```sh
-   ./bazel-bin/third_party/word2vec/word2vec -train chars_for_w2v.txt -output vec.txt -size 50 -sample 1e-4 -negative 5 -hs 1 -binary 0 -iter 5
-  ``` 
+  > 
+  > ./bazel-bin/third_party/word2vec/word2vec -train chars_for_w2v.txt -output vec.txt -size 50 -sample 1e-4 -negative 5 -hs 1 -binary 0 -iter 5
+  > 
   > 构建训练语料工具
-  ```sh
-   bazel build kcws/train:generate_training
-  ``` 
+  > 
+  > bazel build kcws/train:generate_training
+  > 
   > 生成语料
-  ```sh 
-   ./bazel-bin/kcws/train/generate_training vec.txt <语料目录> all.txt
-  ``` 
+  > 
+  > ./bazel-bin/kcws/train/generate_training vec.txt <语料目录> all.txt
+  > 
   > 得到train.txt , test.txt文件
-  ```sh 
-   python kcws/train/filter_sentence.py all.txt
-  ```
-
+  > 
+  > python kcws/train/filter_sentence.py all.txt
+  
 4. 安装好tensorflow,切换到kcws代码目录，运行:
-```sh
-  python kcws/train/train_cws_lstm.py --word2vec_path vec.txt --train_data_path <绝对路径到train.txt> --test_data_path test.txt --max_sentence_len 80 --learning_rate 0.001
-```  
-5. 生成vocab
-```sh
-   bazel  build kcws/cc:dump_vocab
-```
-```sh
-  ./bazel-bin/kcws/cc/dump_vocab vec.txt kcws/models/basic_vocab.txt
-```
 
+  > python kcws/train/train_cws.py --word2vec_path vec.txt --train_data_path <绝对路径到train.txt> --test_data_path test.txt --max_sentence_len 80 --learning_rate 0.001
+  （默认使用IDCNN模型，可设置参数”--use_idcnn False“来切换BiLSTM模型)
+  
+5. 生成vocab
+  > bazel  build kcws/cc:dump_vocab
+  
+  > ./bazel-bin/kcws/cc/dump_vocab vec.txt kcws/models/basic_vocab.txt
+  
 6. 导出训练好的模型
-```sh
- python tools/freeze_graph.py --input_graph logs/graph.pbtxt  --input_checkpoint logs/model.ckpt --output_node_names  "transitions,Reshape_7"   --output_graph kcws/models/seg_model.pbtxt
-```
+ >  python tools/freeze_graph.py --input_graph logs/graph.pbtxt  --input_checkpoint logs/model.ckpt --output_node_names  "transitions,Reshape_7"   --output_graph kcws/models/seg_model.pbtxt
 
 7. 词性标注模型下载  (临时方案，后续文档给出词性标注模型训练，导出等）
 
    >  从 https://pan.baidu.com/s/1bYmABk 下载pos_model.pbtxt到kcws/models/目录下
 
 8. 运行web service
-```sh
-bazel build kcws/cc:seg_backend_api
-```
-```sh
-  ./bazel-bin/kcws/cc/seg_backend_api --model_path=kcws/models/seg_model.pbtxt(绝对路径到seg_model.pbtxt>)   --vocab_path=kcws/models/basic_vocab.txt   --max_sentence_len=80
-```
+ >  ./bazel-bin/kcws/cc/seg_backend_api --model_path=kcws/models/seg_model.pbtxt(绝对路径到seg_model.pbtxt>)   --vocab_path=kcws/models/basic_vocab.txt   --max_sentence_len=80
 
 ### 词性标注的训练说明：
 
@@ -108,6 +94,4 @@ http://45.32.100.248:9090/
 http://45.32.100.248:18080
 
 
-### Reference 
-Guillaume Lample, Miguel Ballesteros, Kazuya Kawakami, Sandeep Subramanian, and Chris Dyer "Neural architectures for named entity recognition," NAACL-HLT, 2016 (http://www.aclweb.org/anthology/N16-1030)
 
