@@ -16,8 +16,10 @@ def main(argc, argv):
     nl = 0
     bad = 0
     test = 0
-    tr_p = open("train.txt", "w")
-    te_p = open("test.txt", "w")
+    tr_f = "train.txt"
+    tr_p = open(tr_f, "w")
+    te_f = "test.txt"
+    te_p = open(te_f, "w")
     while True:
         line = fp.readline()
         if not line:
@@ -48,6 +50,7 @@ def main(argc, argv):
         nl += 1
     fp.close()
     print("got bad:%d" % (bad))
+    print("generate training set %s and testing set %s" % (tr_f, te_f))
 
 
 if __name__ == '__main__':

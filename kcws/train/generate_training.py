@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Koth Chen
 # @Date:   2016-10-21 16:17:53
-# @Last Modified by:   Koth
-# @Last Modified time: 2017-01-25 16:54:11
+# @Last Modified by:   Hao Zhuang (zhuanghoward@gmail.com)
+# @Last Modified time: 2017-11-05 
 
 import sys
 import os
@@ -112,7 +112,9 @@ def main(argc, argv):
     vob.Load(vobPath)
     out = open(argv[3], "w")
     for dirName, subdirList, fileList in os.walk(rootDir):
-        curDir = os.path.join(rootDir, dirName)
+        #curDir = os.path.join(rootDir, dirName)
+        curDir = dirName
+        print('processing the directory: ', curDir)
         for file in fileList:
             if file.endswith(".txt"):
                 curFile = os.path.join(curDir, file)

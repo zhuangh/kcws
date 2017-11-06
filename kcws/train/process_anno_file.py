@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 # @Author: Koth Chen
 # @Date:   2016-10-15 14:49:40
-# @Last Modified by:   Koth
-# @Last Modified time: 2016-12-09 20:33:30
+# @Last Modified by:   Hao Zhuang (zhuanghoward@gmail.com)
+# @Last Modified time: 2017-11-04
+
 import sys
 import os
 
@@ -97,14 +98,10 @@ def main(argc, argv):
   rootDir = argv[1]
   out = open(argv[2], "w")
   for dirName, subdirList, fileList in os.walk(rootDir):
-    #print(dirName)#, subdirList)#, fileList)
-    #curDir = os.path.join(rootDir, dirName)
     curDir = dirName
     for file in fileList:
       if file.endswith(".txt"):
         curFile = os.path.join(curDir, file)
-        print("processing:%s" % (curFile))
-        #print("processing:%s %s" % (curFile, curDir))
         fp = open(curFile, "r")
         for line in fp.readlines():
           line = line.strip()
